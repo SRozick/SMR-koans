@@ -15,9 +15,29 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 class Proxy
   def initialize(target_object)
     @object = target_object
-    # ADD MORE CODE HERE
+    @messages = []
+    # WRITE CODE HERE
   end
 
+    def method_missing(method, *args, &block)
+     @messages << method
+     @object.send(method, *args, &block)
+    end
+
+    def called?(arg)
+#      @messages.each { |m| m.to_s == arg.to_s ? true : false }
+      @messages.index(arg)
+    end
+
+    def number_of_times_called(arg)
+      method_count = 0
+      @messages.each { |m| m == arg ? method_count += 1 : method_count }
+      return method_count
+    end
+
+    def messages
+      @messages
+    end
   # WRITE CODE HERE
 end
 
@@ -66,6 +86,7 @@ class AboutProxyObjectProject < Neo::Koan
     tv.power
     tv.power
 
+#assert_equal [], tv.messages
     assert tv.called?(:power)
     assert ! tv.called?(:channel)
   end
